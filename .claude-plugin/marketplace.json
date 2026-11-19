@@ -1,0 +1,18 @@
+{
+  "name": "saes-plugins",
+  "owner": {
+    "name": "SAES Team"
+  },
+  "metadata": {
+    "description": "Official Claude Code plugin marketplace for the SAES (Stochastic Algorithm Evaluation Suite) ecosystem."
+  },
+  "plugins": [
+    {
+      "name": "saes",
+      "version": "0.1.0",
+      "description": "Agentic development context and statistical methodology skills for using the saesV2 Python library.",
+      "source": "./plugins/saes",
+      "strict": true
+    }
+  ]
+}
