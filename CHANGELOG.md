@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Automatic git tag (`vX.Y.Z`) creation and GitHub Release publishing in `.github/workflows/release.yml`.
+
 ## [Released]
 
 ## [0.2.0] — 2026-11-19 (@rorro6787)
