@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/saes-suite/saes-plugins/main/assets/saes-logo.svg" alt="SAES Logo" width="128" />
+</p>
+
 # SAES Agent Plugins & Skills (`saes-plugins`)
 
 Official Claude Code plugin marketplace and cross-agent skills repository for the **SAES (Stochastic Algorithm Evaluation Suite)** ecosystem.
