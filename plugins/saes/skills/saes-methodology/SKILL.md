@@ -7,7 +7,7 @@ description: Use when preparing benchmark CSV datasets, choosing statistical tes
 
 ## 1. Required Benchmark CSV Schema
 
-Every CSV loaded by `saesV2.load()` must follow the tidy long format with these required columns:
+Every CSV loaded by `saes.load()` must follow the tidy long format with these required columns:
 
 | Column | Type | Meaning |
 | :--- | :--- | :--- |
@@ -18,30 +18,33 @@ Every CSV loaded by `saesV2.load()` must follow the tidy long format with these 
 | `value` | `float` | Observed numeric metric value |
 | `maximize` | `bool` | `true` if higher is better (e.g. Hypervolume), `false` if lower is better (e.g. IGD, error) |
 
-Always validate with `saesV2.validate(dataset)` before running analyses or generating tables/plots.
+Always validate with `saes.validate(dataset)` before running analyses or generating tables/plots.
 
-## 2. Automated Test Selection & Assumption Checking
+## 2. Explicit Pairing & Automated Test Selection
 
-When writing or reviewing statistical evaluation logic:
-
-- **2 algorithms (independent samples)**:
-  1. Check normality per group (Shapiro-Wilk via `saesV2.statistics.shapiro`).
-  2. Check variance homogeneity (Levene's test via `saesV2.statistics.levene`).
-  3. If normal + equal variances -> Student's `ttest_ind`.
-  4. If normal + unequal variances -> Welch's `ttest_welch`.
-  5. If non-normal -> `mann_whitney` (or `wilcoxon` when paired across matched `run_id`/instances).
+- **Never assume pairing from matching `run_id` indices**: Independent stochastic runs numbered `0..29` are unpaired (`paired=False`, the default across `saes.analyze`, `saes.generate_table`, `saes.profiles`, and `saes.power`). Pass `paired=True` explicitly only when using identical cross-validation folds or Common Random Numbers (CRN).
+- **2 algorithms (independent samples, `paired=False`)**:
+  1. Check normality per group (`saes.statistics.shapiro`, `saes.statistics.lilliefors`, or `saes.statistics.anderson`).
+  2. Check variance homogeneity (`saes.statistics.levene`).
+  3. If normal + equal variances -> Student's `saes.statistics.ttest_ind`.
+  4. If normal + unequal variances -> Welch's `saes.statistics.ttest_welch`.
+  5. If non-normal -> `saes.statistics.mann_whitney` (or `saes.statistics.brunner_munzel` for non-parametric heteroscedastic stochastic equality).
+- **2 algorithms (explicitly paired, `paired=True`)**:
+  1. Check Shapiro-Wilk normality on paired differences $x_1 - x_2$.
+  2. If normal -> `saes.statistics.ttest_rel`; if non-normal -> `saes.statistics.wilcoxon`.
+  3. For repeated $k$-fold cross-validation, prefer `saes.statistics.bayesian_correlated_ttest(..., rho=n_test / n_train)`.
 - **>2 algorithms (single `(instance, metric)` cell)**:
-  1. Check normality and homoscedasticity.
-  2. If normal + homoscedastic -> `anova_oneway`.
-  3. If normal + heteroscedastic -> `anova_welch`.
-  4. If non-normal -> `kruskal` (or `friedman_nemenyi` across multiple instances).
-- **Multiple instances (omnibus + post-hoc)**:
-  - Frequentist: `friedman_nemenyi` (Demšar 2006 Friedman + Nemenyi Critical Distance).
-  - Bayesian: `bayesian_ranking` / `bayesian_signed_rank` / `bayesian_sign` (Benavoli et al. 2017) with a Region of Practical Equivalence (`rope_percent`, default `1.0`).
+  1. Normal + homoscedastic -> `saes.statistics.anova_oneway` + `saes.statistics.tukey_hsd` (or `saes.statistics.dunnett` vs. control).
+  2. Normal + heteroscedastic -> `saes.statistics.anova_welch` + `saes.statistics.games_howell`.
+  3. Non-normal -> `saes.statistics.kruskal` + `saes.statistics.dunn` or `saes.statistics.conover_iman`.
+- **Multiple instances (blocked omnibus + post-hoc)**:
+  - Never run unblocked One-Way ANOVA or Kruskal-Wallis on pooled instance means.
+  - Frequentist blocked omnibus: `saes.statistics.friedman_nemenyi` (exact tie-corrected Friedman + Iman-Davenport + Nemenyi CD), `saes.statistics.friedman_aligned_ranks`, `saes.statistics.quade`, or `saes.statistics.rm_anova` (with Greenhouse-Geisser $\varepsilon$).
+  - Bayesian blocked analysis: `saes.statistics.bayesian_signed_rank` / `saes.statistics.bayesian_sign` (Benavoli et al. 2017, exact DP prior with optional absolute `rope` in metric units) and `saes.statistics.bayesian_plackett_luce` (Calvo et al. 2018).
 
 ## 3. Reporting Standards
 
-- **Never report p-values alone**: always pair statistical significance ($p < \alpha$) with **effect size** (Cohen's $d$, $\eta^2$, Vargha-Delaney $A_{12}$, or Cliff's $\delta$) and practical significance.
-- **Multiple comparisons**: apply `adjust_pvalues(..., method="holm")` (or `bonferroni`, `hochberg`, `fdr_bh`) whenever conducting pairwise post-hoc tests.
+- **Never report p-values alone**: always pair statistical significance ($p < \alpha$) with **effect size and its confidence interval** (Cohen's $d$ / Hedges' $g$ via noncentral-$t$, $\eta^2$ via noncentral-$F$, Vargha-Delaney $A_{12}$, or Cliff's $\delta$ via Brunner-Munzel logit CI).
+- **Multiple comparisons**: apply `saes.statistics.adjust_pvalues(..., method="holm")` (or `bonferroni`, `hochberg`, `hommel`, `finner`, `holland`, `rom`, `li`, `fdr_bh`, `fdr_by`), or matrix-level `saes.statistics.adjust_pvalues_shaffer` / `saes.statistics.adjust_pvalues_bergmann_hommel` for all-pairs comparisons.
 - **Optimization direction**: always respect `maximize` when ranking algorithms or interpreting $A_{12}$ / Cliff's $\delta$.
-- **Sample size & power**: use `saesV2.power(dataset, metric=..., target_power=0.80)` to audit whether non-significant results are underpowered rather than evidence of equivalence.
+- **Power, sensitivity & equivalence**: never interpret a non-significant $p \ge \alpha$ as evidence of equivalence, and avoid relying on observed ("post-hoc") power (Hoenig & Heisey 2001). Report a priori sample size planning (`saes.power`), Minimum Detectable Effect Size (`saes.statistics.minimum_detectable_effect`), and formal equivalence testing via `saes.tost` (Schuirmann 1987; Lakens 2017).

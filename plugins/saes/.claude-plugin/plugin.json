@@ -1,7 +1,7 @@
 {
   "name": "saes",
   "version": "0.2.1",
-  "description": "Agentic development context and statistical methodology skills for building benchmark analysis pipelines with the saesV2 Python library.",
+  "description": "Agentic development context and statistical methodology skills for building benchmark analysis pipelines with the saes Python library.",
   "author": {
     "name": "SAES Team"
   }

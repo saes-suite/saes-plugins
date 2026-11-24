@@ -9,10 +9,10 @@ Official Claude Code plugin marketplace and cross-agent skills repository for th
 ## Included Plugins & Skills
 
 ### `saes` (`./plugins/saes`)
-Pure context & methodology plugin (no MCP server required) designed for **agentic development using the `saesV2` Python library** directly.
+Pure context & methodology plugin (no MCP server required) designed for **agentic development using the `saes` Python library** directly.
 
 Includes three on-demand skills (`SKILL.md` standard):
-- `saes-python-api`: Public Python API (`saesV2.load`, `validate`, `explore`, `analyze`, `statistics.*`, models, exceptions).
+- `saes-python-api`: Public Python API (`saes.load`, `validate`, `explore`, `analyze`, `statistics.*`, models, exceptions).
 - `saes-methodology`: Required tidy benchmark CSV schema, automated statistical test routing, effect sizes, and reporting rules.
 - `saes-reporting-viz`: Publication-grade plots (`plot`, `export_plot`), tables (`generate_table`, `export_table`), performance profiles, power analysis, and FAIR reproducibility packages.
 
