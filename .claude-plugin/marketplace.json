@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "saes",
-      "version": "0.2.1",
+      "version": "1.0.0",
       "description": "Agentic development context and statistical methodology skills for using the saes Python library.",
       "source": "./plugins/saes",
       "strict": true

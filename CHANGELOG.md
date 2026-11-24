@@ -7,12 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [Released]
+
+## [1.0.0] — 2026-11-24 (@rorro6787)
+
 ### Changed
 
 - **Breaking (v1.0.0)**: Migrated all `saes-plugins` skills (`saes-python-api`, `saes-methodology`, `saes-reporting-viz`), manifests, and documentation from `saesV2` to canonical **`saes >= 2.0.0`** (`pip install saes`, `import saes`).
 - Synchronized skills with all `saes` 2.0 public APIs: explicit `paired=False` default, Lilliefors & Anderson–Darling normality checkers, Brunner–Munzel test, effect-size CI helpers (`cohens_d_ci`, `eta_squared_ci`, `vargha_delaney_a12_ci`, `cliffs_delta_ci`, `effect_size_forest`), 11 multiple-testing adjustments + Shaffer & Bergmann–Hommel, post-hoc tests (`tukey_hsd`, `games_howell`, `dunnett`, `dunn`, `conover_iman`), blocked omnibus tests (`friedman_aligned_ranks`, `quade`, `rm_anova`), Bayesian correlated $t$-test & Plackett–Luce ranking, MDES sensitivity & TOST equivalence testing, `plackett-luce` / `effect-size-forest` plotters, and `TestRegistry` / `TableRendererRegistry` extensibility APIs.
-
-## [Released]
 
 ## [0.2.1] — 2026-11-20 (@rorro6787)
 
