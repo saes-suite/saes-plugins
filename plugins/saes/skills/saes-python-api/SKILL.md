@@ -99,11 +99,13 @@ Use `saes.statistics` when running specific tests on `groups: dict[str, np.ndarr
   - `saes.statistics.minimum_detectable_effect(n, target_power=0.80, alpha=0.05, paired=False) -> float`
   - `saes.statistics.tost(x1, x2, low_eqbound, high_eqbound=None, alpha=0.05, paired=False, equal_var=False) -> TOSTResult`
 
-## Extensibility Registries
+## Extensibility Registries & Python Plugins
 
-- `saes.TestRegistry` + `saes.StatisticalTest` — Register custom hypothesis tests.
+- `saes.TestRegistry` + `saes.StatisticalTest` — Register custom hypothesis tests (runtime or PEP `entry_points`).
 - `saes.TableRendererRegistry` + `saes.TableRenderer` — Register custom table export formats.
 - `saes.PlotterRegistry` — Register custom plot generators.
+- `saes.PluginRegistry` (package `saes.plugins`) + `saes.SAESPlugin` + `saes.PluginManifest` — Discover and register built-in (e.g. `pareto`) or external domain plugins via `saes.plugins.discover()`, `saes.plugins.list_installed()`, `saes.plugins.get(id)`, and `saes.plugins.get_namespace(id)`.
+- **Built-in Pareto & EAF Plugin (`from saes.plugins import pareto`)**: `load_csv`, `load_directory`, `load_zip`, `load_reference_front`, `create_demo_collection`, `attainment`, `eaf_difference`, `coverage`, `plot(..., mode=..., show_reference=..., algorithms=..., legend_placement=..., title_mode=..., font_size=..., font_family=..., label_mode=..., bold_mode=..., show_grid=..., dark_theme=..., width_px=..., height_px=...)`, `export_plot`, and `FrontCollection.to_indicators_dataset() -> saes.Dataset`.
 
 ## Exceptions (`saes.domain.exceptions`)
 
